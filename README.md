@@ -1,1 +1,1 @@
-# generative_ai_scfu123013
+# G3-ai-interview-agent
