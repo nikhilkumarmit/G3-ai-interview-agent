@@ -1,0 +1,38 @@
+ALEX CHEN
+San Francisco, CA | alex.chen@example.com | (555) 019-2834 | github.com/alexchen-dev
+
+SUMMARY
+Software Engineer with 3+ years of experience designing scalable distributed backend microservices, real-time data pipelines, and REST/gRPC APIs using Python, Go, and PostgreSQL. Passionate about developer tooling and high-concurrency systems.
+
+SKILLS
+- Programming Languages: Python, Go, JavaScript, TypeScript, SQL
+- Frameworks & Libraries: FastAPI, Django, Flask, PyTorch, React
+- Databases & Storage: PostgreSQL, Redis, MongoDB, Elasticsearch
+- Cloud & DevOps: AWS (EC2, S3, RDS), Docker, Kubernetes, CI/CD GitHub Actions, Terraform
+- System Design: Microservices, Distributed Systems, Event-Driven Architecture (Kafka)
+
+EXPERIENCE
+Software Engineer | CloudScale Inc. | June 2022 – Present
+- Designed and deployed an event-driven notification microservice using FastAPI, Kafka, and Redis caching that processed 15,000 events/second with sub-30ms latency.
+- Refactored monolithic PostgreSQL reporting database with optimized indexing and connection pooling, reducing slow query times by 42%.
+- Built automated CI/CD pipeline using GitHub Actions and Docker, reducing release cycle deployment time from 45 minutes to 8 minutes.
+- Collaborated in an agile team of 6 engineers, performing code reviews and mentoring junior developers on Python asynchronous concurrency.
+
+Associate Backend Engineer | DataPulse Technologies | July 2021 – May 2022
+- Developed RESTful APIs using Python Flask and SQLAlchemy for customer telemetry ingestion.
+- Implemented rate limiting and authentication middleware using JWT and Redis.
+- Authored comprehensive unit and integration tests achieving 88% test coverage using PyTest.
+
+PROJECTS
+1. HyperQueue Distributed Task Engine (Python, Redis, asyncio)
+- Architected an open-source distributed task queue in Python using asyncio and Redis streams.
+- Supported exponential backoff retries, dead-letter queues, and dynamic worker autoscaling.
+- Garnered 350+ GitHub stars and processed over 2 million test tasks without dropped payloads.
+
+2. Real-Time Collaborative Canvas (TypeScript, WebSockets, Go)
+- Built a low-latency collaborative whiteboard with Go WebSocket backend and React frontend.
+- Utilized Conflict-free Replicated Data Types (CRDTs) to synchronize concurrent edits from 50+ simultaneous users.
+
+EDUCATION
+B.S. in Computer Science | University of California, Davis | Graduated May 2021
+- Coursework: Distributed Systems, Database Architecture, Algorithms, Computer Networks

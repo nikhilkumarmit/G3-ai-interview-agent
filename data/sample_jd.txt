@@ -1,0 +1,26 @@
+Role: Senior Backend Engineer - Distributed Systems
+Company: FinTech Velocity Systems
+Location: Remote / San Francisco, CA
+
+About the Role:
+We are looking for a Senior Backend Engineer to join our Core Banking Infrastructure team. You will be responsible for architecting and building high-throughput payment settlement pipelines, event streaming services, and resilient distributed workflows.
+
+Key Responsibilities:
+- Design, implement, and maintain low-latency backend microservices using Python and Go.
+- Build resilient event-driven architectures with Apache Kafka or Redis Streams capable of processing financial transactions with strict idempotency.
+- Optimize relational databases (PostgreSQL) and caching systems for high concurrency and zero data loss.
+- Collaborate cross-functionally with Product, Security, and DevOps to deliver reliable, observable software.
+- Drive engineering excellence through code reviews, architectural RFCs, and mentoring team members.
+
+Required Qualifications:
+- 3+ years of professional backend engineering experience with Python or Go.
+- Proven hands-on experience building event-driven systems with Kafka, RabbitMQ, or Redis streams.
+- Strong proficiency in SQL, PostgreSQL performance tuning, and database migration strategies.
+- Deep understanding of distributed systems principles, concurrency, and REST/gRPC API design.
+- Experience with Docker, Kubernetes, and cloud platforms (AWS/GCP).
+- Bachelor's degree in Computer Science or equivalent practical experience.
+
+Nice to Have:
+- Experience in FinTech, banking transaction processing, or payment gateways.
+- Familiarity with CI/CD automation and infrastructure-as-code (Terraform).
+- Contributions to open-source distributed computing or async libraries.
