@@ -107,7 +107,41 @@ class InterviewManager:
             state.stage = plan[0].stage
 
     def get_session(self, session_id: str) -> Optional[InterviewState]:
-        return self.active_sessions.get(session_id)
+        if session_id in self.active_sessions:
+            return self.active_sessions[session_id]
+
+        # Automatic recovery from SessionStore on server reload/restart
+        try:
+            from src.persistence.session_store import session_store
+            data = session_store.load_session(session_id)
+            if data:
+                data.pop("_last_persisted_at", None)
+                state = InterviewState(**data)
+                self.active_sessions[session_id] = state
+
+                # Create fallback engine if missing
+                if session_id not in self.question_engines:
+                    from src.ingestion.resume_loader import CandidateSummary, IngestionResult
+                    summary = CandidateSummary(
+                        name=state.candidate_name,
+                        target_role=state.target_role,
+                        skills=[],
+                        projects=[]
+                    )
+                    dummy_ingestion = IngestionResult(
+                        resume_chunks=[],
+                        jd_chunks=[],
+                        candidate_summary=summary,
+                        raw_resume_text="",
+                        raw_jd_text=""
+                    )
+                    self.question_engines[session_id] = QuestionEngine(dummy_ingestion)
+
+                return state
+        except Exception as e:
+            logger.debug(f"Could not restore session {session_id} from disk: {e}")
+
+        return None
 
     # Tool Execution Handlers
     def execute_next_question(self, session_id: str) -> Dict[str, Any]:

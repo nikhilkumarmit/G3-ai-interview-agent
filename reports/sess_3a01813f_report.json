@@ -1,0 +1,48 @@
+{
+  "session_id": "sess_3a01813f",
+  "candidate_name": "Alex Chen",
+  "target_role": "Senior Backend Engineer - Distributed Systems",
+  "generated_at": 1792821788.653258,
+  "overall_score_out_of_5": 2.0,
+  "category_averages": {
+    "relevance": 2.0,
+    "structure_star": 2.0,
+    "specificity_depth": 2.0,
+    "communication": 2.0,
+    "technical_alignment": 2.0
+  },
+  "answer_evaluations": [],
+  "three_strengths": [
+    "Engagement: Began the interview process and reviewed initial introductory questions.",
+    "Speech Cadence: Spoke at a measured rate of 135.0 words per minute (Optimal Pacing (120-160 WPM)).",
+    "Verbal Polish: Maintained minimal filler words (0 detected across the interview session)."
+  ],
+  "three_improvements": [
+    "Response Length: Ensure you answer questions with sufficient technical depth (aim for 40-90 words per response).",
+    "Structured STAR Progression: Clearly delineate the Situation, the Task you took on, the exact Actions you personally executed, and the measurable Result.",
+    "Articulate Architectural Tradeoffs: When recommending or describing a technical solution, explicitly highlight 1 alternative option you considered and why you chose your approach."
+  ],
+  "speech_signals": {
+    "words_per_minute": 135.0,
+    "pacing_verdict": "Optimal Pacing (120-160 WPM)",
+    "total_words_spoken": 0,
+    "total_speaking_seconds": 0.0,
+    "long_pauses_count": 0,
+    "total_fillers_detected": 0,
+    "filler_words_breakdown": {}
+  },
+  "disclaimer": "IMPORTANT NOTICE: This evaluation report is generated exclusively by an AI Mock Interview Coach for diagnostic practice and self-improvement. It contains objective feedback derived strictly from the recorded transcript and NEVER makes or implies hiring, selection, or rejection decisions.",
+  "full_transcript": [
+    {
+      "turn_id": "turn_1",
+      "speaker": "agent",
+      "stage": "intro",
+      "text": "Welcome Alex Chen. Before we begin, please note that I am an AI Mock Interview Coach and this session is being recorded for your feedback report. To start off, could you briefly introduce yourself and share what drew you to this Senior Backend Engineer - Distributed Systems opportunity?",
+      "start_time": 1792821761.654224,
+      "end_time": 1792821762.654224,
+      "latency_ms": null,
+      "question_id": "q_1",
+      "is_followup": false
+    }
+  ]
+}

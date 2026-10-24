@@ -1,0 +1,48 @@
+{
+  "session_id": "sess_511637c5",
+  "candidate_name": "ALEX CHEN",
+  "target_role": "Senior Backend Engineer - Distributed Systems",
+  "generated_at": 1792818568.121251,
+  "overall_score_out_of_5": 4.0,
+  "category_averages": {
+    "relevance": 4.0,
+    "structure_star": 4.0,
+    "specificity_depth": 4.0,
+    "communication": 4.0,
+    "technical_alignment": 4.0
+  },
+  "answer_evaluations": [],
+  "three_strengths": [
+    "Concrete Architectural Ownership: Grounded answers in personal hands-on microservices implementation rather than passive team participation.",
+    "Clear STAR Incident Breakdown: Structured behavioural responses clearly delineating the initial technical challenge, specific diagnostic actions taken, and the resolution outcome.",
+    "Steady Conversational Cadence: Maintained a fluent conversational pace (135.0 WPM) with minimal hesitation pauses."
+  ],
+  "three_improvements": [
+    "Quantify Technical Outrage Impacts: In behavioural questions, state the concrete SLA or latency metrics (e.g. 'reduced p99 latency from 200ms to 32ms') earlier in the situation phase.",
+    "Deepen Tradeoff Analysis: When discussing chosen technologies (e.g. Redis vs Kafka), explicitly mention 1-2 alternate approaches considered and why they were rejected.",
+    "Curb Micro-Fillers Under Pressure: Detected 0 filler words. Pausing in silence during thinking pauses is preferable to verbal fillers."
+  ],
+  "speech_signals": {
+    "words_per_minute": 135.0,
+    "pacing_verdict": "Optimal Pacing (120-160 WPM)",
+    "total_words_spoken": 0,
+    "total_speaking_seconds": 0.0,
+    "long_pauses_count": 0,
+    "total_fillers_detected": 0,
+    "filler_words_breakdown": {}
+  },
+  "disclaimer": "IMPORTANT NOTICE: This evaluation report is generated exclusively by an AI Mock Interview Coach for personal skill refinement, diagnostic self-assessment, and placement interview practice. It contains solely constructive coaching feedback and NEVER makes or implies hiring, selection, or rejection decisions.",
+  "full_transcript": [
+    {
+      "turn_id": "turn_1",
+      "speaker": "agent",
+      "stage": "intro",
+      "text": "Welcome ALEX CHEN. Before we begin, please note that I am an AI Mock Interview Coach and this session is being recorded for your feedback report. To start off, could you briefly introduce yourself and share what drew you to this Senior Backend Engineer - Distributed Systems opportunity?",
+      "start_time": 1792818561.3458939,
+      "end_time": 1792818562.3458939,
+      "latency_ms": null,
+      "question_id": "q_1",
+      "is_followup": false
+    }
+  ]
+}

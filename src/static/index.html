@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Mock Interview Coach Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css?v=2">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+        </div>
+        <div class="brand-text">
+          <h2>InterviewAI</h2>
+          <span>Voice Coach Studio</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button id="nav-btn-ingest" class="nav-item active" onclick="switchTab('ingest')">
+          <span class="nav-icon">📄</span> Ingestion & Setup
+        </button>
+        <button id="nav-btn-interview" class="nav-item" onclick="switchTab('interview')">
+          <span class="nav-icon">🎙️</span> Voice Interview
+          <span id="active-session-badge" class="badge-pill hidden">LIVE</span>
+        </button>
+        <button id="nav-btn-report" class="nav-item" onclick="switchTab('report')">
+          <span class="nav-icon">📊</span> Feedback Report
+        </button>
+        <button id="nav-btn-audit" class="nav-item" onclick="switchTab('audit')">
+          <span class="nav-icon">🛡️</span> Acceptance & Bias Audit
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-dot online"></span>
+          <span>Voice VAD Buffer: 1.2s</span>
+        </div>
+        <div class="team-credits">
+          <small>Team: Suhas • Snehal • Saraswati</small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="header-titles">
+          <h1 id="page-title">Candidate Ingestion & Setup</h1>
+          <p id="page-subtitle">Load resume and job description to initialize grounded interview questions</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="quick-sample-btn" class="btn btn-secondary" onclick="loadSampleData()">
+            ⚡ Auto-Fill Sample Data
+          </button>
+          <button id="clear-form-btn" class="btn btn-secondary" onclick="clearIngestionForm()">
+            🗑️ Clear
+          </button>
+          <div id="session-timer-badge" class="timer-badge hidden">
+            <span>Time Left: </span><strong id="timer-display">15:00</strong>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: INGESTION & SETUP -->
+      <section id="tab-ingest" class="tab-pane active">
+        <div class="grid-2col">
+          <div class="glass-card">
+            <div class="card-header">
+              <h3>1. Resume Ingestion</h3>
+              <span class="badge-tag">PDF or Plain Text</span>
+            </div>
+            <div class="card-body">
+              <div class="file-drop-zone" id="drop-zone" onclick="document.getElementById('resume-file-input').click()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <p>Click or drag PDF resume here</p>
+                <small id="file-name-label">PDF parsed into sections with metadata</small>
+                <input type="file" id="resume-file-input" accept=".pdf,.txt" style="display:none;" onchange="handleFileSelected(event)">
+              </div>
+              <div class="form-group">
+                <label for="resume-text-input">Or Paste Resume Content:</label>
+                <textarea id="resume-text-input" rows="8" placeholder="Paste full resume text here..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-header">
+              <h3>2. Job Description & Target Role</h3>
+              <span class="badge-tag">JD Grounding</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="jd-text-input">Job Description & Core Requirements:</label>
+                <textarea id="jd-text-input" rows="12" placeholder="Paste Job Description with required technical competencies..."></textarea>
+              </div>
+
+              <div class="settings-row">
+                <div class="setting-item">
+                  <label for="budget-input">Question Budget:</label>
+                  <input type="number" id="budget-input" min="3" max="10" value="5">
+                </div>
+                <div class="setting-item">
+                  <label for="timelimit-input">Time Limit (mins):</label>
+                  <input type="number" id="timelimit-input" min="5" max="45" value="15">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ingestion Preview Card -->
+        <div id="summary-card" class="glass-card mt-4">
+          <div class="card-header">
+            <h3>Ingested Candidate Profile Summary</h3>
+            <span class="badge-tag success" id="summary-status-tag">Ready</span>
+          </div>
+          <div class="card-body profile-grid">
+            <div class="profile-item">
+              <span class="profile-label">Candidate Name (Editable ✏️)</span>
+              <input type="text" id="candidate-name-input" class="profile-input-field" value="" placeholder="Auto-detected from resume or type name...">
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Target Role (Editable ✏️)</span>
+              <input type="text" id="target-role-input" class="profile-input-field" value="" placeholder="Auto-detected from JD (e.g. Java Developer)...">
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Featured Projects</span>
+              <strong id="summary-projects-count" class="profile-val">Paste resume or click Auto-Fill</strong>
+            </div>
+            <div class="profile-item full-width">
+              <span class="profile-label">Extracted Skills</span>
+              <div id="summary-skills" class="skills-wrap">
+                <span class="skill-pill" style="opacity: 0.7;">Upload resume to extract skills</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button id="start-interview-btn" class="btn btn-primary btn-large" onclick="startInterviewSession()">
+              🎙️ Begin Voice Mock Interview
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: LIVE VOICE INTERVIEW STUDIO -->
+      <section id="tab-interview" class="tab-pane">
+        <!-- Stage Stepper Timeline -->
+        <div class="stage-stepper glass-card">
+          <div class="step-node active" id="step-intro">
+            <span class="step-num">1</span>
+            <span class="step-title">Intro & AI Disclaimer</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node" id="step-resume">
+            <span class="step-num">2</span>
+            <span class="step-title">Resume Grounding</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node" id="step-behavioural">
+            <span class="step-num">3</span>
+            <span class="step-title">STAR Behavioural</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node" id="step-role">
+            <span class="step-num">4</span>
+            <span class="step-title">JD Technical Link</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node" id="step-candidate">
+            <span class="step-num">5</span>
+            <span class="step-title">Candidate Inquiry</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node" id="step-closing">
+            <span class="step-num">6</span>
+            <span class="step-title">Closing</span>
+          </div>
+        </div>
+
+        <div class="grid-interview">
+          <!-- Voice Studio Controls & Visualizer -->
+          <div class="glass-card studio-card">
+            <div class="studio-header">
+              <div class="ai-speaker-info">
+                <div class="ai-avatar pulse-speaking" id="ai-avatar">🤖</div>
+                <div>
+                  <h3 id="agent-speaker-name">AI Interview Coach</h3>
+                  <span id="agent-status-label" class="status-pill speaking">Greeting Candidate...</span>
+                </div>
+              </div>
+              <div class="studio-metrics">
+                <div class="metric-box">
+                  <span class="metric-label">Turn Latency</span>
+                  <span id="live-latency-val" class="metric-val">-- ms</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-label">Questions</span>
+                  <span id="live-q-progress" class="metric-val">1 / 5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Waveform Canvas -->
+            <div class="visualizer-container">
+              <canvas id="waveform-canvas" width="600" height="120"></canvas>
+              <div class="vad-cushion-overlay">
+                <span class="vad-tag">VAD Thinking Pause Cushion: <strong>1.2s Protected</strong></span>
+              </div>
+            </div>
+
+            <!-- Voice Controls -->
+            <div class="voice-controls">
+              <button id="mic-toggle-btn" class="btn btn-mic" onclick="toggleMicrophone()">
+                <span class="mic-icon">🎙️</span>
+                <span id="mic-btn-label">Start Speaking</span>
+              </button>
+
+              <button id="interrupt-btn" class="btn btn-warning" onclick="interruptAgent()">
+                ⚡ Interrupt Agent
+              </button>
+
+              <button id="end-interview-btn" class="btn btn-danger" onclick="endInterviewSession()">
+                ⏹️ End & View Report
+              </button>
+            </div>
+
+            <!-- Manual Answer Input (Voice & Text Response) -->
+            <div class="manual-input-box" style="margin-top: 15px;">
+              <input type="text" id="manual-answer-input" placeholder="Type your response here and press Enter or Send (or speak into mic)..." onkeydown="handleManualAnswer(event)">
+              <button class="btn btn-primary" onclick="submitManualAnswer()">💬 Send Answer</button>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px; text-align: center;">
+              💡 <em>You can speak directly (click <strong>Start Speaking</strong>) or type in the box above and click <strong>Send Answer</strong>.</em>
+            </div>
+          </div>
+
+          <!-- Live Scrolling Transcript -->
+          <div class="glass-card transcript-card">
+            <div class="card-header">
+              <h3>Live Interview Transcript</h3>
+              <span id="followup-badge" class="badge-pill hidden">Follow-up Probe #1</span>
+            </div>
+            <div class="transcript-feed" id="transcript-feed">
+              <!-- Turns injected dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: FEEDBACK REPORT -->
+      <section id="tab-report" class="tab-pane">
+        <div id="report-empty-state" class="empty-state">
+          <p>Complete a mock interview or load a saved session to inspect your comprehensive rubric scorecard.</p>
+        </div>
+
+        <div id="report-content" class="report-content hidden">
+          <!-- Top Overall Score Card -->
+          <div class="overall-score-banner glass-card">
+            <div class="score-dial">
+              <div class="dial-circle">
+                <span id="rep-overall-score" class="score-number">4.2</span>
+                <span class="score-total">/ 5.0</span>
+              </div>
+              <p class="dial-label">Overall Performance</p>
+            </div>
+            <div class="score-summary-text">
+              <h2 id="rep-candidate-header">Evaluation for Alex Chen</h2>
+              <p id="rep-role-header">Target Role: Senior Backend Engineer - Distributed Systems</p>
+              <div class="report-tags">
+                <span class="badge-tag success">Evidence-Based Scoring</span>
+                <span class="badge-tag">Deterministic Rubric</span>
+                <span class="badge-tag">Zero Hire/Reject Decision</span>
+              </div>
+            </div>
+            <div class="export-actions">
+              <button class="btn btn-secondary" onclick="exportReportJSON()">📥 Export JSON</button>
+              <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
+            </div>
+          </div>
+
+          <!-- Category Rubric Breakdown Grid -->
+          <div class="rubric-grid">
+            <div class="glass-card rubric-card">
+              <h4>Relevance & Directness</h4>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" id="bar-relevance" style="width: 80%;"></div>
+              </div>
+              <span class="score-subtext" id="score-relevance">4.0 / 5.0</span>
+            </div>
+            <div class="glass-card rubric-card">
+              <h4>STAR Framework Structure</h4>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" id="bar-star" style="width: 85%;"></div>
+              </div>
+              <span class="score-subtext" id="score-star">4.3 / 5.0</span>
+            </div>
+            <div class="glass-card rubric-card">
+              <h4>Specificity & Depth</h4>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" id="bar-depth" style="width: 90%;"></div>
+              </div>
+              <span class="score-subtext" id="score-depth">4.5 / 5.0</span>
+            </div>
+            <div class="glass-card rubric-card">
+              <h4>Communication & Pacing</h4>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" id="bar-comm" style="width: 80%;"></div>
+              </div>
+              <span class="score-subtext" id="score-comm">4.0 / 5.0</span>
+            </div>
+            <div class="glass-card rubric-card">
+              <h4>Role & Tech Alignment</h4>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" id="bar-align" style="width: 90%;"></div>
+              </div>
+              <span class="score-subtext" id="score-align">4.5 / 5.0</span>
+            </div>
+          </div>
+
+          <!-- Speech Signals Grid -->
+          <div class="glass-card speech-signals-card mt-4">
+            <div class="card-header">
+              <h3>Speech Signals & Fluency Analysis</h3>
+              <span class="badge-tag">STT Timestamps Derived</span>
+            </div>
+            <div class="card-body speech-grid">
+              <div class="speech-box">
+                <span class="speech-num" id="metric-wpm">138</span>
+                <span class="speech-title">Words Per Minute (WPM)</span>
+                <small id="metric-pacing" class="speech-hint">Optimal Conversational Pace</small>
+              </div>
+              <div class="speech-box">
+                <span class="speech-num" id="metric-fillers">3</span>
+                <span class="speech-title">Filler Words Detected</span>
+                <small id="metric-fillers-breakdown" class="speech-hint">Minimal: 'like' (2), 'um' (1)</small>
+              </div>
+              <div class="speech-box">
+                <span class="speech-num" id="metric-pauses">1</span>
+                <span class="speech-title">Long Pauses (> 3.0s)</span>
+                <small class="speech-hint">Healthy structured thinking pause</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strengths & Improvements Columns -->
+          <div class="grid-2col mt-4">
+            <div class="glass-card coaching-card strengths">
+              <div class="card-header">
+                <h3>🌟 3 Key Strengths</h3>
+              </div>
+              <ul id="rep-strengths-list" class="coaching-list"></ul>
+            </div>
+
+            <div class="glass-card coaching-card improvements">
+              <div class="card-header">
+                <h3>🎯 3 Areas for Growth</h3>
+              </div>
+              <ul id="rep-improvements-list" class="coaching-list"></ul>
+            </div>
+          </div>
+
+          <!-- Evidence-Based Question Scorecards -->
+          <div class="glass-card mt-4">
+            <div class="card-header">
+              <h3>Evidence-Based Answer Scorecards</h3>
+              <span class="badge-tag">Grounded Transcript Quotes</span>
+            </div>
+            <div class="card-body" id="scorecards-container">
+              <!-- Rendered dynamically with exact quotes -->
+            </div>
+          </div>
+
+          <!-- Disclaimer Alert -->
+          <div class="disclaimer-alert mt-4">
+            <p id="rep-disclaimer-text"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: ACCEPTANCE TEST & BIAS AUDIT -->
+      <section id="tab-audit" class="tab-pane">
+        <div class="glass-card audit-header-card">
+          <div class="audit-intro">
+            <h2>6 Automated Acceptance Tests & Bias Audit Suite</h2>
+            <p>Verification of Grounding, Follow-up logic, Safety prompt injection defense, 5-run stability, and Accented Speech WER.</p>
+          </div>
+          <button id="run-audit-btn" class="btn btn-primary btn-large" onclick="runAutomatedAudit()">
+            🚀 Execute Full Audit Suite
+          </button>
+        </div>
+
+        <div id="audit-results-container" class="mt-4 hidden">
+          <!-- 6 Acceptance Tests Table -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h3>Requirement #8: 6 Automated Acceptance Tests</h3>
+              <span id="audit-badge" class="badge-tag success">6 / 6 PASSED</span>
+            </div>
+            <div class="table-responsive">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Specification</th>
+                    <th>Evidence / Trace</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="acceptance-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid-2col mt-4">
+            <!-- 5-Run Scoring Stability Card -->
+            <div class="glass-card">
+              <div class="card-header">
+                <h3>5-Run Scoring Stability Check</h3>
+                <span class="badge-tag success">Spread: 0 pts</span>
+              </div>
+              <div class="card-body">
+                <p>Same candidate transcript scored across 5 separate evaluation passes:</p>
+                <div class="stability-runs" id="stability-runs-pills"></div>
+                <div class="stat-row">
+                  <span>Score Spread:</span> <strong id="stat-spread">0.00</strong>
+                </div>
+                <div class="stat-row">
+                  <span>Standard Deviation:</span> <strong id="stat-std">0.0000</strong>
+                </div>
+                <small class="text-muted">Verified deterministic rubric scoring without hallucination.</small>
+              </div>
+            </div>
+
+            <!-- Name Bias Comparison Card -->
+            <div class="glass-card">
+              <div class="card-header">
+                <h3>Demographic Name Bias Audit</h3>
+                <span class="badge-tag success">Zero Discrepancy</span>
+              </div>
+              <div class="card-body">
+                <p>Identical technical response evaluated across diverse demographic names:</p>
+                <div id="name-bias-container" class="name-bias-list"></div>
+                <small class="text-muted">Verified that candidate identity does not alter technical rubric score.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accented Speech WER & Fairness Impact -->
+          <div class="glass-card mt-4">
+            <div class="card-header">
+              <h3>Accented Speech Acoustic STT & Fairness Analysis</h3>
+              <span class="badge-tag warning" id="accent-wer-badge">WER: 37.0%</span>
+            </div>
+            <div class="card-body">
+              <div class="wer-comparison">
+                <div class="wer-box">
+                  <span class="wer-label">Candidate Ground Truth Audio:</span>
+                  <p id="wer-ground-truth"></p>
+                </div>
+                <div class="wer-box">
+                  <span class="wer-label">Standard STT Transcription:</span>
+                  <p id="wer-hypothesis" class="text-accent"></p>
+                </div>
+              </div>
+              <div class="fairness-report-box mt-3" id="wer-fairness-box">
+                <!-- Fairness analysis rendered here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js?v=2"></script>
+</body>
+</html>

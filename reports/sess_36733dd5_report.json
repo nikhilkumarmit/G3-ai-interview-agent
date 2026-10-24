@@ -1,0 +1,90 @@
+{
+  "session_id": "sess_36733dd5",
+  "candidate_name": "ALEX CHEN",
+  "target_role": "Java Developer",
+  "generated_at": 1792819282.287831,
+  "overall_score_out_of_5": 1.0,
+  "category_averages": {
+    "relevance": 1.0,
+    "structure_star": 1.0,
+    "specificity_depth": 1.0,
+    "communication": 1.0,
+    "technical_alignment": 1.0
+  },
+  "answer_evaluations": [
+    {
+      "question_text": "Welcome ALEX CHEN. Before we begin, please note that I am an AI Mock Interview Coach and this session is being recorded for your feedback report. To start off, could you briefly introduce yourself and share what drew you to this Java Developer opportunity?",
+      "candidate_answer": "OK OK OK OK",
+      "scores": {
+        "relevance": 1,
+        "structure_star": 1,
+        "specificity_depth": 1,
+        "communication": 1,
+        "technical_alignment": 1
+      },
+      "evidence_quotes": {
+        "relevance": "Extremely brief response (4 words): \"OK OK OK OK.\"",
+        "structure_star": "Lacked narrative structure or methodology: \"OK OK OK OK.\"",
+        "specificity_depth": "Insufficient detail provided: \"OK OK OK OK.\"",
+        "communication": "Turn was too brief (4 words) for effective conversational assessment.",
+        "technical_alignment": "Demonstrated role understanding evidenced by: \"OK OK OK OK.\""
+      },
+      "feedback": "Your answer was brief (4 words). Expand with concrete tools you personally used and the specific outcome."
+    }
+  ],
+  "three_strengths": [
+    "Grounding & Specificity: Demonstrated concrete ownership in your responses, as evidenced by your answer: \"OK OK OK OK.\"",
+    "Speech Cadence: Spoke at a measured rate of 4.2 words per minute (Slow Pacing (< 110 WPM) - Consider speaking with more energy).",
+    "Verbal Polish: Maintained minimal filler words (0 detected across the interview session)."
+  ],
+  "three_improvements": [
+    "Elaborate on Technical Depth: In response to 'Welcome ALEX CHEN. Before we begin, please note th...', your answer was 4 words (\"OK OK OK OK.\"). Expand with specific tools, tradeoffs, and failure modes.",
+    "Structured STAR Progression: Clearly delineate the Situation, the Task you took on, the exact Actions you personally executed, and the measurable Result.",
+    "Articulate Architectural Tradeoffs: When recommending or describing a technical solution, explicitly highlight 1 alternative option you considered and why you chose your approach."
+  ],
+  "speech_signals": {
+    "words_per_minute": 4.2,
+    "pacing_verdict": "Slow Pacing (< 110 WPM) - Consider speaking with more energy",
+    "total_words_spoken": 4,
+    "total_speaking_seconds": 56.6,
+    "long_pauses_count": 0,
+    "total_fillers_detected": 0,
+    "filler_words_breakdown": {}
+  },
+  "disclaimer": "IMPORTANT NOTICE: This evaluation report is generated exclusively by an AI Mock Interview Coach for diagnostic practice and self-improvement. It contains objective feedback derived strictly from the recorded transcript and NEVER makes or implies hiring, selection, or rejection decisions.",
+  "full_transcript": [
+    {
+      "turn_id": "turn_1",
+      "speaker": "agent",
+      "stage": "intro",
+      "text": "Welcome ALEX CHEN. Before we begin, please note that I am an AI Mock Interview Coach and this session is being recorded for your feedback report. To start off, could you briefly introduce yourself and share what drew you to this Java Developer opportunity?",
+      "start_time": 1792819206.184486,
+      "end_time": 1792819207.184486,
+      "latency_ms": null,
+      "question_id": "q_1",
+      "is_followup": false
+    },
+    {
+      "turn_id": "turn_2",
+      "speaker": "candidate",
+      "stage": "intro",
+      "text": "OK OK OK OK",
+      "start_time": 1792819207.184486,
+      "end_time": 1792819263.784099,
+      "latency_ms": 1.8510818481445312,
+      "question_id": "q_1",
+      "is_followup": false
+    },
+    {
+      "turn_id": "turn_3",
+      "speaker": "agent",
+      "stage": "intro",
+      "text": "That provides a brief start, but could you elaborate with specific technical details? Specifically, what was your direct role, and what concrete tools or techniques did you employ?",
+      "start_time": 1792819263.784099,
+      "end_time": 1792819263.7863302,
+      "latency_ms": null,
+      "question_id": "q_1",
+      "is_followup": true
+    }
+  ]
+}

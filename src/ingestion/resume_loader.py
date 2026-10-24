@@ -64,13 +64,13 @@ def chunk_document_by_sections(text: str, source_type: str = "resume") -> List[D
     lines = sanitized.split("\n")
 
     section_keywords = {
-        "summary": ["summary", "about me", "professional summary", "objective", "profile"],
-        "skills": ["skills", "technical skills", "technologies", "core competencies"],
-        "experience": ["experience", "work experience", "employment", "professional experience", "history"],
-        "projects": ["projects", "personal projects", "academic projects", "key projects"],
-        "education": ["education", "academic background", "qualifications", "degree"],
-        "responsibilities": ["responsibilities", "key responsibilities", "duties", "what you will do"],
-        "requirements": ["requirements", "qualifications", "required skills", "what we are looking for"]
+        "summary": ["summary", "about me", "professional summary", "objective", "profile", "executive summary", "biography", "career summary"],
+        "skills": ["skills", "technical skills", "technologies", "core competencies", "competencies", "tools & technologies", "tech stack", "languages & frameworks", "areas of expertise", "tools", "languages"],
+        "experience": ["experience", "work experience", "employment", "professional experience", "work history", "career history", "employment history", "experience & background"],
+        "projects": ["projects", "personal projects", "academic projects", "key projects", "selected projects", "portfolio", "notable projects"],
+        "education": ["education", "academic background", "qualifications", "degree", "academic qualifications", "certifications", "education & credentials"],
+        "responsibilities": ["responsibilities", "key responsibilities", "duties", "what you will do", "role overview"],
+        "requirements": ["requirements", "qualifications", "required skills", "what we are looking for", "nice to have", "basic qualifications", "minimum qualifications"]
     }
 
     chunks: List[DocumentChunk] = []
@@ -99,12 +99,12 @@ def chunk_document_by_sections(text: str, source_type: str = "resume") -> List[D
 
     for line in lines:
         stripped = line.strip()
-        lower_line = stripped.lower().rstrip(":")
+        clean_header = re.sub(r'^[#*_\-\s]+', '', stripped).lower().rstrip(":")
 
         # Check if line matches a known section header
         matched_section = None
         for sec, keywords in section_keywords.items():
-            if lower_line in keywords or any(stripped.lower() == f"## {kw}" or stripped.lower() == f"### {kw}" for kw in keywords):
+            if clean_header in keywords:
                 matched_section = sec
                 break
 
@@ -123,81 +123,109 @@ def chunk_document_by_sections(text: str, source_type: str = "resume") -> List[D
     return chunks
 
 def extract_candidate_summary(resume_chunks: List[DocumentChunk], jd_chunks: List[DocumentChunk], raw_resume: str, raw_jd: str) -> CandidateSummary:
-    """Extract candidate name, skills, projects, and target role."""
-    # 1. Candidate Name (usually in the first lines of resume)
+    """Extract candidate name, skills, projects, and target role from any arbitrary resume and JD."""
+    # 1. Candidate Name (from first few lines of resume)
     name = "Candidate"
     lines = [l.strip() for l in raw_resume.split("\n") if l.strip()]
-    if lines:
-        first_line = lines[0]
-        # Common pattern: Alex Chen or Name in caps/title
-        if len(first_line.split()) in [2, 3, 4] and not any(kw in first_line.lower() for kw in ["resume", "curriculum", "page", "phone", "email"]):
-            name = first_line.strip("#* ")
-
-    # 2. Target Role (from JD)
-    target_role = "Software Engineer"
-    for line in raw_jd.split("\n"):
-        if "role:" in line.lower() or "title:" in line.lower() or "position:" in line.lower():
-            target_role = line.split(":", 1)[1].strip()
-            break
-        elif "engineer" in line.lower() or "developer" in line.lower() or "architect" in line.lower():
-            if len(line.strip()) < 50:
-                target_role = line.strip("#* ")
+    for line in lines[:6]:
+        clean = re.sub(r'^[#*_\-\s]+', '', line).strip()
+        lower = clean.lower()
+        # Handle explicit Name: or Candidate: prefixes
+        for prefix in ["name:", "candidate:", "applicant:", "candidate name:"]:
+            if lower.startswith(prefix):
+                clean = clean[len(prefix):].strip()
                 break
 
-    # 3. Skills Extraction
+        # Skip headers, contact info, emails, urls, or section keywords
+        if any(kw in clean.lower() for kw in ["@", "http", "www", "github", "linkedin", "phone", "tel:", "curriculum", "resume", "summary", "objective"]):
+            continue
+
+        # Clean trailing degrees or paren
+        clean_name = re.sub(r'[,\|\(\[].*$', '', clean).strip()
+        words = clean_name.split()
+        if 1 <= len(words) <= 4 and 2 <= len(clean_name) <= 35:
+            # Check characters are mostly alphabetic
+            if re.match(r"^[A-Za-z\s\.\'\-]+$", clean_name):
+                name = clean_name.title()
+                break
+
+    # 2. Target Role (from JD)
+    jd_clean = raw_jd.strip()
+    target_role = "Software Engineer"
+    
+    # If the user typed a short role or keyword (e.g. 'java', 'React Developer', 'DevOps')
+    if jd_clean and len(jd_clean) < 50 and "\n" not in jd_clean:
+        if any(t in jd_clean.lower() for t in ["engineer", "developer", "architect", "manager", "designer", "scientist", "analyst", "lead", "specialist"]):
+            target_role = jd_clean.title()
+        else:
+            target_role = f"{jd_clean.title()} Developer"
+    else:
+        for line in raw_jd.split("\n"):
+            clean = line.strip()
+            lower = clean.lower()
+            if any(prefix in lower for prefix in ["role:", "title:", "position:", "job title:"]):
+                target_role = clean.split(":", 1)[1].strip()
+                break
+            elif any(title in lower for title in ["engineer", "developer", "architect", "manager", "designer", "scientist", "analyst", "lead", "specialist"]):
+                if len(clean) < 60 and not clean.endswith("."):
+                    target_role = re.sub(r'^[#*_\-\s]+', '', clean)
+                    break
+        if target_role == "Software Engineer" and jd_clean:
+            first_line = jd_clean.split("\n")[0].strip()
+            if 3 < len(first_line) < 45:
+                target_role = first_line.title()
+
+    # 3. Skills Extraction from any resume
     skills: List[str] = []
     skills_chunk = next((c.content for c in resume_chunks if c.section == "skills"), "")
     if skills_chunk:
-        # Split by commas, dashes, bullets, colons
-        skill_candidates = re.split(r'[,•|\-\n:]', skills_chunk)
+        skill_candidates = re.split(r'[,•|\-\n:;/]', skills_chunk)
         for sc in skill_candidates:
             token = sc.strip()
-            if token and len(token) < 25 and not token.lower().endswith("skills") and not token.lower().endswith("languages"):
+            if token and 2 <= len(token) <= 30 and not any(k in token.lower() for k in ["skill", "language", "framework", "tool", "proficien"]):
                 if token not in skills:
                     skills.append(token)
     if not skills:
-        common_tech = ["Python", "Go", "Java", "JavaScript", "TypeScript", "SQL", "PostgreSQL", "Redis", "Kafka", "Docker", "AWS", "FastAPI", "React"]
+        # Fallback keyword scanning
+        common_tech = ["Python", "JavaScript", "TypeScript", "React", "Node.js", "Java", "Go", "C++", "C#", "SQL", "PostgreSQL", "MongoDB", "Redis", "Kafka", "Docker", "Kubernetes", "AWS", "GCP", "Azure", "Git", "Machine Learning", "System Design"]
         skills = [tech for tech in common_tech if tech.lower() in raw_resume.lower()]
 
-    # 4. Projects Extraction
+    # 4. Projects Extraction from any resume
     projects: List[str] = []
     projects_chunk = next((c.content for c in resume_chunks if c.section == "projects"), "")
     if projects_chunk:
         proj_lines = projects_chunk.split("\n")
         for pl in proj_lines:
             pl_str = pl.strip()
-            if pl_str.startswith(("1.", "2.", "3.", "4.", "5.", "-", "*")):
-                title = re.sub(r'^[\d\.\-\*\s]+', '', pl_str).split("(")[0].split("-")[0].strip()
-                if title and len(title) < 50 and title not in projects:
+            # Match formats like: 1. Project Title, - Project Title (Tech), Project Title - Description
+            if pl_str.startswith(("1.", "2.", "3.", "4.", "5.", "-", "•", "*", "#")):
+                title = re.sub(r'^[\d\.\-\*•#\s]+', '', pl_str).split("(")[0].split("–")[0].split("-")[0].split(":")[0].strip()
+                if title and 3 <= len(title) <= 45 and title not in projects:
                     projects.append(title)
-            elif "(" in pl_str and ")" in pl_str and len(pl_str) < 60:
+            elif "(" in pl_str and ")" in pl_str and len(pl_str) < 55:
                 title = pl_str.split("(")[0].strip()
-                if title and title not in projects:
+                if title and 3 <= len(title) <= 45 and title not in projects:
                     projects.append(title)
 
-    if not projects:
-        # Fallback check
-        for line in raw_resume.split("\n"):
-            if "project" in line.lower() and len(line.strip()) < 50:
-                projects.append(line.strip("#*- "))
-
-    # 5. Experience Highlights
+    # 5. Experience Highlights & Companies
     experience_highlights = []
     exp_chunk = next((c.content for c in resume_chunks if c.section == "experience"), "")
     if exp_chunk:
         for el in exp_chunk.split("\n"):
             el_s = el.strip()
-            if el_s.startswith(("-", "•", "*")) and len(el_s) > 20:
+            if el_s.startswith(("-", "•", "*")) and len(el_s) > 25:
                 experience_highlights.append(el_s.lstrip("-•* "))
-            if len(experience_highlights) >= 3:
+            elif len(experience_highlights) == 0 and len(el_s) > 30 and not el_s.endswith(":"):
+                experience_highlights.append(el_s)
+            if len(experience_highlights) >= 4:
                 break
 
     summary = CandidateSummary(
         name=name,
         target_role=target_role,
-        skills=skills[:12],
+        skills=skills[:15],
         projects_count=len(projects),
-        projects=projects,
+        projects=projects[:5],
         experience_highlights=experience_highlights,
         summary_text=f"Candidate {name} applying for {target_role}. Detected {len(skills)} skills and {len(projects)} featured projects."
     )
